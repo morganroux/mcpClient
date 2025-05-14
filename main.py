@@ -19,11 +19,8 @@ def log_stderr(stderr):
 
 server_process = subprocess.Popen(
     [
-        "/Users/Morgan/.local/bin/uv",
-        "--directory",
-        "/Users/Morgan/Programmation/python/mcp-behringer/mcp-behringer",
-        "run",
-        "server.py",
+        "/Users/Morgan/.nvm/versions/node/v20.13.0/bin/node",
+        "/Users/Morgan/.nvm/versions/node/v20.13.0/lib/node_modules/@playwright/mcp/cli.js",
     ],
     stdout=subprocess.PIPE,
     stderr=subprocess.PIPE,
@@ -32,7 +29,9 @@ server_process = subprocess.Popen(
 )
 
 # Start a thread to handle stderr logging
-stderr_thread = threading.Thread(target=log_stderr, args=(server_process.stderr,), daemon=True)
+stderr_thread = threading.Thread(
+    target=log_stderr, args=(server_process.stderr,), daemon=True
+)
 stderr_thread.start()
 
 
@@ -92,6 +91,7 @@ class MCPServer:
         )
         self.send_mcp_message(init_complete_message)
         print("Initialization complete.")
+
 
 mcp_server = MCPServer(server_process)
 
