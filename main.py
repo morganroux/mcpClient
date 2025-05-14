@@ -155,4 +155,4 @@ def run(question: str):
             continue
 
 
-run("Set the volume of the first channel to 0.5")
+run("open mon-marche.fr")
