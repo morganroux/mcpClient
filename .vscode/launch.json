@@ -9,6 +9,7 @@
       "type": "debugpy",
       "request": "launch",
       "program": "${file}",
+      "args": ["/Users/Morgan/.nvm/versions/node/v20.13.0/lib/node_modules/@playwright/mcp/cli.js"],
       "console": "integratedTerminal"
     }
   ]

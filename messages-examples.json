@@ -1,0 +1,9 @@
+[
+  {"jsonrpc": "2.0","method": "initialize","params": {"clientInfo": { "name": "Llama Agent", "version": "0.1" },"protocolVersion": "2024-11-05","capabilities": {}},"id": 1},
+  {"jsonrpc": "2.0","method": "notifications/initialized","params": {}},
+  {"jsonrpc": "2.0","method": "tools/list","params": {},"id": 2},
+  {"jsonrpc": "2.0","method": "browser_navigate","params": {"url": "mon-marche.fr"},"id": 5},
+  {"jsonrpc": "2.0","method": "set_strip_name","id": 3},
+  {"method":"tools/call", "params":{"name": "browser_navigate", "arguments": {"url": "https://www.google.com"}}, "jsonrpc":"2.0", "id":2}
+
+]
