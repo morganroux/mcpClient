@@ -18,14 +18,16 @@ ability to solve the problem and think insightfully.
 
 """
 
-COT = "First, think carefully step by step." #about what documents are needed to answer the query. Then, print out the TITLE and ID of each document. Then, format the IDs into a list."
+COT = "First, think carefully step by step."  # about what documents are needed to answer the query. Then, print out the TITLE and ID of each document. Then, format the IDs into a list."
 
-PROMPT = f"""
-
+SYSTEM_PROMPT = f"""
 You're an agent. You can use a MCP server to handle browser interactions.
 Here are some reminders to help you:
 {REMINDERS}
 
-You should go to the website mon-marche.fr and buy the ingredient to make an apple pie. The website is in french. If you need an address, use '39 boulevard des capucines 75002 Paris'.
 {COT}
+"""
+
+USER_PROMPT = """
+You should go to the website mon-marche.fr and buy 1kg of tomatoes. The website is in french. If you need an address, use '39 boulevard des capucines 75002 Paris'.
 """

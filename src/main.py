@@ -10,11 +10,12 @@ SERVER_PATH = "/Users/Morgan/.nvm/versions/node/v20.13.0/lib/node_modules/@playw
 
 
 async def run():
-    mcp_client = MCPClient()
-    await mcp_client.connect_to_server(SERVER_PATH)
-    print(mcp_client.available_tools)
+    mcp_client = MCPClient(SERVER_PATH)
     agent = MyAgent(mcp_client)
-
+    await agent.start()
 
 def main():
     asyncio.run(run())
+
+if __name__ == "__main__":
+    main()
