@@ -39,6 +39,7 @@ class MyAgent:
         return self.format_message(role="assistant", content=message)
 
     def get_response(self, llm_input: ResponseInputParam):
+        rprint("Thinking...")
         llm_response = self.openai.responses.create(
             model=self.model,
             input=llm_input,
@@ -87,7 +88,6 @@ class MyAgent:
             answer, tool_calls = self.get_response(self.messages)
             self.messages.append(self.format_assistant_message(answer))
             rprint("Assistant: ", answer)
-            rprint("Tool calls: ", tool_calls)
 
             while len(tool_calls) > 0:
                 rprint("Tool calls: ", tool_calls)
@@ -103,7 +103,6 @@ class MyAgent:
                 answer, tool_calls = self.get_response(inner_messages)
                 self.messages.append(self.format_assistant_message(answer))
                 rprint("Assistant: ", answer)
-                rprint("Tool calls: ", tool_calls)
 
 
     async def start(self):

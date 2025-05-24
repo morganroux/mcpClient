@@ -3,6 +3,7 @@ from typing import Literal
 from typing_extensions import TypedDict
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
+import re
 
 
 class AvailableTool(TypedDict):
@@ -11,6 +12,15 @@ class AvailableTool(TypedDict):
     type: Literal["function"]
     description: str
     parameters: dict[str, object]
+
+
+def extract_error(log: str):
+    match = re.search(r"(.*error): (.*?)(\\n|$)", log, re.IGNORECASE)
+    if match:
+        error_type = match.group(1)
+        error_message = match.group(2)
+        return error_type, error_message
+    return None, None
 
 
 class MCPClient:
@@ -58,13 +68,13 @@ class MCPClient:
                 "required": list(tool.inputSchema["properties"].keys()),
             }
             self.available_tools.append(
-              {
-                "strict": True,
-                "type": "function",
-                "name": tool.name,
-                "description": tool.description or "No description provided",
-                "parameters": parameters,
-              }
+                {
+                    "strict": True,
+                    "type": "function",
+                    "name": tool.name,
+                    "description": tool.description or "No description provided",
+                    "parameters": parameters,
+                }
             )
         print("\nConnected to server with tools:", [tool.name for tool in tools])
 
@@ -81,5 +91,14 @@ class MCPClient:
             raise ValueError("Stdio transport is not initialized")
 
         # Call the tool
-        result = await self.mcp_session.call_tool(tool_name, tool_args)
+        try:
+            result = await self.mcp_session.call_tool(tool_name, tool_args)
+
+            error = extract_error(result.content[0].text)
+            if error[0] is not None:
+                print(f"Error calling tool {tool_name}: {error[0]} - {error[1]}")
+                return None
+        except Exception as e:
+            print(f"Error calling tool {tool_name}: {e}")
+            return None
         return result

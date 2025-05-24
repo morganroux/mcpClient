@@ -21,7 +21,9 @@ ability to solve the problem and think insightfully.
 COT = "First, think carefully step by step."  # about what documents are needed to answer the query. Then, print out the TITLE and ID of each document. Then, format the IDs into a list."
 
 SYSTEM_PROMPT = f"""
-You're an agent. You can use a MCP server to handle browser interactions.
+You're an browsing agent. You can use a MCP server to handle browser interactions.
+When you're interested in an item, always visit the dedicated product page and look at the full description before adding it to the cart.
+If you experience an issue, try to resolve it by reloading the page and try another way to achieve the same goal.
 Here are some reminders to help you:
 {REMINDERS}
 
@@ -29,5 +31,5 @@ Here are some reminders to help you:
 """
 
 USER_PROMPT = """
-You should go to the website mon-marche.fr and buy 1kg of tomatoes. The website is in french. If you need an address, use '39 boulevard des capucines 75002 Paris'.
+You should go to the website mon-marche.fr and the ingredients to cook an apple pie for 6 people. Use your internal knowledge to think out the recipe and go to the website to buy the ingredients. The website is in french. If you need an address, use '39 boulevard des capucines 75002 Paris'.
 """
