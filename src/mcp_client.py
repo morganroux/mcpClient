@@ -24,9 +24,9 @@ def extract_error(log: str):
 
 
 class MCPClient:
-    def __init__(self, server_script_path: str):
+    def __init__(self, server_args: list[str]):
         # Initialize session and client objects
-        self.server_script_path = server_script_path
+        self.server_args = server_args
         self.mcp_session: ClientSession | None = None
         self.exit_stack = AsyncExitStack()
         self.available_tools: list[AvailableTool] = []
@@ -39,14 +39,14 @@ class MCPClient:
         Args:
             server_script_path: Path to the server script (.py or .js)
         """
-        is_python = self.server_script_path.endswith(".py")
-        is_js = self.server_script_path.endswith(".js")
+        is_python = self.server_args[0].endswith(".py")
+        is_js = self.server_args[0].endswith(".js")
         if not (is_python or is_js):
             raise ValueError("Server script must be a .py or .js file")
 
         command = "python" if is_python else "node"
         server_params = StdioServerParameters(
-            command=command, args=[self.server_script_path], env=None
+            command=command, args=self.server_args, env=None
         )
 
         stdio_transport = await self.exit_stack.enter_async_context(

@@ -10,9 +10,8 @@ from openai.types.responses import (
     ResponseInputItemParam,
 )
 
-from rich import print as rprint
 from mcp_client import MCPClient
-from prompts import SYSTEM_PROMPT
+from console import console
 
 
 class MyAgent:
@@ -39,7 +38,7 @@ class MyAgent:
         return self.format_message(role="assistant", content=message)
 
     def get_response(self, llm_input: ResponseInputParam):
-        rprint("Thinking...")
+        console.print("\nThinking...\n", style="cyan")
         llm_response = self.openai.responses.create(
             model=self.model,
             input=llm_input,
@@ -58,9 +57,10 @@ class MyAgent:
 
     async def run_tool(self, tool_call: ResponseFunctionToolCall):
 
-        rprint("Running tool: ", tool_call.name)
-        rprint("with arguments: ", tool_call.arguments)
-        input("Press Enter to continue...")
+        console.rule("Tool Call")
+        console.print("Running tool: ", tool_call.name, style="magenta")
+        console.print("with arguments: ", tool_call.arguments, style="magenta")
+        console.input("Press Enter to continue...")
         toolcall_message = ResponseFunctionToolCallParam(**tool_call.model_dump())
         result = await self.mcp_client.call_tool(
             tool_call.name, json.loads(tool_call.arguments)
@@ -76,21 +76,22 @@ class MyAgent:
             "call_id": tool_call.call_id,
             "output": str(result)[:100],
         }
-        # rprint("Tool result: ", short_result_message)
+        console.print(f"\nTool result: {short_result_message}\n")
 
         return toolcall_message, complete_result_message, short_result_message
 
     async def loop(self):
         tool_calls: list[ResponseFunctionToolCall] = []
         while True:
-            user_input = input("User: ")
+            user_input = console.input("User: ")
             self.messages.append(self.format_user_message(user_input))
             answer, tool_calls = self.get_response(self.messages)
             self.messages.append(self.format_assistant_message(answer))
-            rprint("Assistant: ", answer)
+            console.rule("Assistant")
+            console.print(f"{answer}\n")
 
             while len(tool_calls) > 0:
-                rprint("Tool calls: ", tool_calls)
+                console.print(f"Tool calls: {tool_calls}", style="yellow")
                 inner_messages = self.messages.copy()
                 for tool_call in tool_calls:
                     toolcall_message, complete_result_message, short_result_message = (
@@ -102,11 +103,12 @@ class MyAgent:
                     self.messages.append(short_result_message)
                 answer, tool_calls = self.get_response(inner_messages)
                 self.messages.append(self.format_assistant_message(answer))
-                rprint("Assistant: ", answer)
+                console.rule("Assistant")
+                console.print(f"{answer}\n")
 
-
-    async def start(self):
-        rprint("Starting agent...")
+    async def start(self, system_prompt: str):
+        console.print("Starting agent...")
         await self.mcp_client.connect_to_server()
-        self.messages.append(self.format_developer_message(SYSTEM_PROMPT))
+        self.messages.append(self.format_developer_message(system_prompt))
+        console.rule('Agent Started')
         await self.loop()
