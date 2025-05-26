@@ -42,7 +42,7 @@ when you need to click on an element, rather use a force click tool instead of a
 """
 
 SYSTEM_PROMPT = f"""
-{PLAYWRIGHT_PROMPT}
+{BROWSING_PROMPT}
 
 {REMINDERS}
 
